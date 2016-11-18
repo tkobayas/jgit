@@ -54,6 +54,8 @@ import java.security.MessageDigest;
 
 import org.eclipse.jgit.internal.JGitText;
 import org.eclipse.jgit.transport.PackParser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Inserts objects into an existing {@code ObjectDatabase}.
@@ -68,6 +70,9 @@ import org.eclipse.jgit.transport.PackParser;
  * otherwise making the returned ObjectIds visible to other code.
  */
 public abstract class ObjectInserter implements AutoCloseable {
+
+	private static Logger LOG = LoggerFactory.getLogger(ObjectInserter.class);
+
 	/** An inserter that can be used for formatting and id generation only. */
 	public static class Formatter extends ObjectInserter {
 		@Override
@@ -318,6 +323,7 @@ public abstract class ObjectInserter implements AutoCloseable {
 	 *             the object could not be stored.
 	 */
 	public final ObjectId insert(CommitBuilder builder) throws IOException {
+		LOG.info("insert : " + builder);
 		return insert(Constants.OBJ_COMMIT, builder.build());
 	}
 

@@ -357,6 +357,7 @@ public abstract class Repository implements AutoCloseable {
 	 */
 	@NonNull
 	public RefUpdate updateRef(final String ref, final boolean detach) throws IOException {
+		LOG.info("updateRef : " + ref);
 		return getRefDatabase().newUpdate(ref, detach);
 	}
 
@@ -435,8 +436,16 @@ public abstract class Repository implements AutoCloseable {
 			Object resolved = resolve(rw, revstr);
 			if (resolved instanceof String) {
 				final Ref ref = getRef((String)resolved);
+				if (ref == null) {
+					LOG.info(
+							"resolve() : ref == null, resolved == " + resolved);
+				}
 				return ref != null ? ref.getLeaf().getObjectId() : null;
 			} else {
+				if (resolved == null) {
+					LOG.info(
+							"resolve() : resolved == null");
+				}
 				return (ObjectId) resolved;
 			}
 		}
@@ -488,8 +497,10 @@ public abstract class Repository implements AutoCloseable {
 						}
 					rev = parseSimple(rw, name);
 					name = null;
-					if (rev == null)
+					if (rev == null) {
+						LOG.info("1");
 						return null;
+					}
 				}
 				if (i + 1 < revChars.length) {
 					switch (revChars[i + 1]) {
@@ -594,8 +605,10 @@ public abstract class Repository implements AutoCloseable {
 						}
 					rev = parseSimple(rw, name);
 					name = null;
-					if (rev == null)
+					if (rev == null) {
+						LOG.info("2");
 						return null;
+					}
 				}
 				rev = rw.peel(rev);
 				if (!(rev instanceof RevCommit))
@@ -656,8 +669,10 @@ public abstract class Repository implements AutoCloseable {
 							throw new RevisionSyntaxException(revstr);
 						Ref ref = getRef(name);
 						name = null;
-						if (ref == null)
+						if (ref == null) {
+							LOG.info("3");
 							return null;
+						}
 						if (ref.isSymbolic())
 							ref = ref.getLeaf();
 						name = ref.getName();
@@ -706,8 +721,10 @@ public abstract class Repository implements AutoCloseable {
 							throw new RevisionSyntaxException(revstr);
 						Ref ref = getRef(name);
 						name = null;
-						if (ref == null)
+						if (ref == null) {
+							LOG.info("4");
 							return null;
+						}
 						// @{n} means current branch, not HEAD@{1} unless
 						// detached
 						if (ref.isSymbolic())
@@ -728,15 +745,20 @@ public abstract class Repository implements AutoCloseable {
 					rev = parseSimple(rw, name);
 					name = null;
 				}
-				if (rev == null)
+				if (rev == null) {
+					LOG.info("5");
 					return null;
+				}
 				tree = rw.parseTree(rev);
-				if (i == revChars.length - 1)
+				if (i == revChars.length - 1) {
+					LOG.info("6");
 					return tree.copy();
+				}
 
 				TreeWalk tw = TreeWalk.forPath(rw.getObjectReader(),
 						new String(revChars, i + 1, revChars.length - i - 1),
 						tree);
+				LOG.info("7");
 				return tw != null ? tw.getObjectId(0) : null;
 			}
 			default:
@@ -744,17 +766,26 @@ public abstract class Repository implements AutoCloseable {
 					throw new RevisionSyntaxException(revstr);
 			}
 		}
-		if (rev != null)
+		if (rev != null) {
+			LOG.info("8");
 			return rev.copy();
-		if (name != null)
+		}
+		if (name != null) {
+			LOG.info("9");
 			return name;
-		if (done == revstr.length())
+		}
+		if (done == revstr.length()) {
+			LOG.info("10");
 			return null;
+		}
 		name = revstr.substring(done);
 		if (!Repository.isValidRefName("x/" + name)) //$NON-NLS-1$
 			throw new RevisionSyntaxException(revstr);
-		if (getRef(name) != null)
+		if (getRef(name) != null) {
+			LOG.info("11");
 			return name;
+		}
+		LOG.info("12");
 		return resolveSimple(name);
 	}
 
@@ -787,6 +818,7 @@ public abstract class Repository implements AutoCloseable {
 			Ref r = getRefDatabase().getRef(revstr);
 			if (r != null)
 				return r.getObjectId();
+			LOG.info("r = null, revstr = " + revstr);
 		}
 
 		if (AbbreviatedObjectId.isId(revstr))

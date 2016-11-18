@@ -53,11 +53,16 @@ import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.revwalk.RevObject;
 import org.eclipse.jgit.revwalk.RevWalk;
 import org.eclipse.jgit.transport.PushCertificate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Creates, updates or deletes any reference.
  */
 public abstract class RefUpdate {
+
+	private static Logger LOG = LoggerFactory.getLogger(RefUpdate.class);
+
 	/** Status of an update request. */
 	public static enum Result {
 		/** The ref update/delete has not been attempted by the caller. */
@@ -469,6 +474,7 @@ public abstract class RefUpdate {
 	 *             an unexpected IO error occurred while writing changes.
 	 */
 	public Result forceUpdate() throws IOException {
+		LOG.info("forceUpdate");
 		force = true;
 		return update();
 	}
