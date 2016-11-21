@@ -41,7 +41,6 @@ package org.eclipse.jgit.api;
 
 import static org.junit.Assert.assertEquals;
 
-import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
@@ -80,7 +79,7 @@ public class ConcurrentCommitAndResolveTest extends RepositoryTestCase {
 						for (int i = 0; i < committerCount; i++) {
 							git.commit().setMessage("commit num " + i).call();
 						}
-					} catch (GitAPIException e) {
+					} catch (Exception e) {
 						e.printStackTrace();
 					}
 					System.out.println("committer finished : elapsedTime = "
@@ -96,19 +95,21 @@ public class ConcurrentCommitAndResolveTest extends RepositoryTestCase {
 				public void run() {
 					long start = System.currentTimeMillis();
 					System.out.println("reader start");
-					try {
-						for (int i = 0; i < readerCount; i++) {
+
+					for (int i = 0; i < readerCount; i++) {
+						try {
 							ObjectId objectId = git.getRepository()
 									.resolve("master^{tree}");
 							if (objectId == null) {
 								System.out.println("objectId == null");
 								failureSet.add(i);
 							}
+						} catch (Exception e) {
+							System.out.println("reader error : " + e.getClass()
+									+ ", " + e.getMessage()); // ignore
 						}
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
 					}
+
 					System.out.println("reader finished : elapsedTime = "
 							+ (System.currentTimeMillis() - start) + " ms");
 				}
