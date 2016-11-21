@@ -474,7 +474,7 @@ public abstract class RefUpdate {
 	 *             an unexpected IO error occurred while writing changes.
 	 */
 	public Result forceUpdate() throws IOException {
-		LOG.info("forceUpdate");
+		// LOG.info("forceUpdate");
 		force = true;
 		return update();
 	}

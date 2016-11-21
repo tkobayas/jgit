@@ -323,7 +323,7 @@ public abstract class ObjectInserter implements AutoCloseable {
 	 *             the object could not be stored.
 	 */
 	public final ObjectId insert(CommitBuilder builder) throws IOException {
-		LOG.info("insert : " + builder);
+		// LOG.info("insert : " + builder);
 		return insert(Constants.OBJ_COMMIT, builder.build());
 	}
 
