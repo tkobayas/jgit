@@ -300,7 +300,7 @@ public class RefDirectory extends RefDatabase {
 					break;
 				}
 			} catch (IOException e) {
-				LOG.info(e.getClass() + " : " + e.getMessage());
+				// LOG.info(e.getClass() + " : " + e.getMessage());
 				if (!(!needle.contains("/") && "".equals(prefix) && e //$NON-NLS-1$ //$NON-NLS-2$
 						.getCause() instanceof InvalidObjectIdException)) {
 					throw e;
@@ -903,18 +903,19 @@ public class RefDirectory extends RefDatabase {
 		final RefList<LooseRef> curList = looseRefs.get();
 		final int idx = curList.find(name);
 		if (name.equals("refs/heads/master") && idx < 0) {
-			LOG.info("refs/heads/master, idx < 0");
+			// LOG.info("refs/heads/master, idx < 0");
 		}
 		if (0 <= idx) {
 			final LooseRef o = curList.get(idx);
 			final LooseRef n = scanRef(o, name);
-			LOG.info("o = " + o + ", n = " + n);
+			// LOG.info("o = " + o + ", n = " + n);
 			if (n == null) {
 				if (looseRefs.compareAndSet(curList, curList.remove(idx)))
 					modCnt.incrementAndGet();
 				if (name.equals("refs/heads/master")) {
-					LOG.info("refs/heads/master, 0 <= idx, packed.get(name) = "
-							+ packed.get(name));
+					// LOG.info("refs/heads/master, 0 <= idx, packed.get(name) =
+					// "
+					// + packed.get(name));
 				}
 				return packed.get(name);
 			}
@@ -929,9 +930,9 @@ public class RefDirectory extends RefDatabase {
 		final LooseRef n = scanRef(null, name);
 		if (n == null) {
 			if (name.equals("refs/heads/master")) {
-				LOG.info(
-						"refs/heads/master, n == null, packed.get(name) == "
-								+ packed.get(name));
+				// LOG.info(
+				// "refs/heads/master, n == null, packed.get(name) == "
+				// + packed.get(name));
 			}
 			return packed.get(name);
 		}
@@ -943,7 +944,7 @@ public class RefDirectory extends RefDatabase {
 
 		if (looseRefs.compareAndSet(curList, curList.add(idx, n)))
 			modCnt.incrementAndGet();
-		LOG.info("Added to looseRefs : " + n);
+		// LOG.info("Added to looseRefs : " + n);
 		return n;
 	}
 
@@ -967,19 +968,19 @@ public class RefDirectory extends RefDatabase {
 			if (path.exists() && path.isFile()) {
 				throw noFile;
 			}
-			LOG.info(noFile.toString());
+			// LOG.info(noFile.toString());
 			return null; // doesn't exist or no file; not a reference.
 		}
 
 		int n = buf.length;
 		if (n == 0) {
-			LOG.info("n == 0");
+			// LOG.info("n == 0");
 			return null; // empty file; not a reference.
 		}
 
 		if (isSymRef(buf, n)) {
 			if (n == limit) {
-				LOG.info("n == limit");
+				// LOG.info("n == limit");
 				return null; // possibly truncated ref
 			}
 			// trim trailing whitespace
@@ -1000,7 +1001,7 @@ public class RefDirectory extends RefDatabase {
 		}
 
 		if (n < OBJECT_ID_STRING_LENGTH) {
-			LOG.info("n < OBJECT_ID_STRING_LENGTH");
+			// LOG.info("n < OBJECT_ID_STRING_LENGTH");
 			return null; // impossibly short object identifier; not a reference.
 		}
 		final ObjectId id;

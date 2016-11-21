@@ -357,7 +357,7 @@ public abstract class Repository implements AutoCloseable {
 	 */
 	@NonNull
 	public RefUpdate updateRef(final String ref, final boolean detach) throws IOException {
-		LOG.info("updateRef : " + ref);
+		// LOG.info("updateRef : " + ref);
 		return getRefDatabase().newUpdate(ref, detach);
 	}
 
@@ -437,14 +437,14 @@ public abstract class Repository implements AutoCloseable {
 			if (resolved instanceof String) {
 				final Ref ref = getRef((String)resolved);
 				if (ref == null) {
-					LOG.info(
-							"resolve() : ref == null, resolved == " + resolved);
+					// LOG.info(
+					// "resolve() : ref == null, resolved == " + resolved);
 				}
 				return ref != null ? ref.getLeaf().getObjectId() : null;
 			} else {
 				if (resolved == null) {
-					LOG.info(
-							"resolve() : resolved == null");
+					// LOG.info(
+					// "resolve() : resolved == null");
 				}
 				return (ObjectId) resolved;
 			}
@@ -498,7 +498,7 @@ public abstract class Repository implements AutoCloseable {
 					rev = parseSimple(rw, name);
 					name = null;
 					if (rev == null) {
-						LOG.info("1");
+						// LOG.info("1");
 						return null;
 					}
 				}
@@ -606,7 +606,7 @@ public abstract class Repository implements AutoCloseable {
 					rev = parseSimple(rw, name);
 					name = null;
 					if (rev == null) {
-						LOG.info("2");
+						// LOG.info("2");
 						return null;
 					}
 				}
@@ -670,7 +670,7 @@ public abstract class Repository implements AutoCloseable {
 						Ref ref = getRef(name);
 						name = null;
 						if (ref == null) {
-							LOG.info("3");
+							// LOG.info("3");
 							return null;
 						}
 						if (ref.isSymbolic())
@@ -722,7 +722,7 @@ public abstract class Repository implements AutoCloseable {
 						Ref ref = getRef(name);
 						name = null;
 						if (ref == null) {
-							LOG.info("4");
+							// LOG.info("4");
 							return null;
 						}
 						// @{n} means current branch, not HEAD@{1} unless
@@ -746,19 +746,19 @@ public abstract class Repository implements AutoCloseable {
 					name = null;
 				}
 				if (rev == null) {
-					LOG.info("5");
+					// LOG.info("5");
 					return null;
 				}
 				tree = rw.parseTree(rev);
 				if (i == revChars.length - 1) {
-					LOG.info("6");
+					// LOG.info("6");
 					return tree.copy();
 				}
 
 				TreeWalk tw = TreeWalk.forPath(rw.getObjectReader(),
 						new String(revChars, i + 1, revChars.length - i - 1),
 						tree);
-				LOG.info("7");
+				// LOG.info("7");
 				return tw != null ? tw.getObjectId(0) : null;
 			}
 			default:
@@ -767,25 +767,25 @@ public abstract class Repository implements AutoCloseable {
 			}
 		}
 		if (rev != null) {
-			LOG.info("8");
+			// LOG.info("8");
 			return rev.copy();
 		}
 		if (name != null) {
-			LOG.info("9");
+			// LOG.info("9");
 			return name;
 		}
 		if (done == revstr.length()) {
-			LOG.info("10");
+			// LOG.info("10");
 			return null;
 		}
 		name = revstr.substring(done);
 		if (!Repository.isValidRefName("x/" + name)) //$NON-NLS-1$
 			throw new RevisionSyntaxException(revstr);
 		if (getRef(name) != null) {
-			LOG.info("11");
+			// LOG.info("11");
 			return name;
 		}
-		LOG.info("12");
+		// LOG.info("12");
 		return resolveSimple(name);
 	}
 
@@ -818,7 +818,7 @@ public abstract class Repository implements AutoCloseable {
 			Ref r = getRefDatabase().getRef(revstr);
 			if (r != null)
 				return r.getObjectId();
-			LOG.info("r = null, revstr = " + revstr);
+			// LOG.info("r = null, revstr = " + revstr);
 		}
 
 		if (AbbreviatedObjectId.isId(revstr))

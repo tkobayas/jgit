@@ -262,10 +262,10 @@ public class FileUtils {
 		int attempts = FS.DETECTED.retryFailedLockFileCommit() ? 10 : 1;
 		while (--attempts >= 0) {
 			try {
-				LOG.info("rename : src = " + src.toPath() + ", dst = "
-						+ dst.toPath());
+				// LOG.info("rename : src = " + src.toPath() + ", dst = "
+				// + dst.toPath());
 				Files.move(src.toPath(), dst.toPath(), options);
-				LOG.info("rename done");
+				// LOG.info("rename done");
 				return;
 			} catch (AtomicMoveNotSupportedException e) {
 				throw e;
@@ -280,6 +280,7 @@ public class FileUtils {
 					}
 					// On *nix there is no try, you do or do not
 					Files.move(src.toPath(), dst.toPath(), options);
+					LOG.info("moved");
 					return;
 				} catch (IOException e2) {
 					LOG.info("2nd failure", e2);
