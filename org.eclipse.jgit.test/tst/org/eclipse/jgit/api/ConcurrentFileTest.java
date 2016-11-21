@@ -46,7 +46,8 @@ public class ConcurrentFileTest {
 						fw.write("BBBBBBBBBBBBBBBBBBBBBBBBBB" + i);
 						fw.close();
 
-						Files.move(lockFile.toPath(), testFile.toPath(), StandardCopyOption.ATOMIC_MOVE);
+						Files.move(lockFile.toPath(), testFile.toPath(),
+								StandardCopyOption.ATOMIC_MOVE);
 
 					}
 				} catch (Exception e) {
@@ -65,8 +66,9 @@ public class ConcurrentFileTest {
 			public void run() {
 				long start = System.currentTimeMillis();
 				System.out.println("reader start");
-				try {
-					for (int i = 0; i < readerCount; i++) {
+
+				for (int i = 0; i < readerCount; i++) {
+					try {
 						File testFile = new File(TEST_FILE);
 
 						FileReader fr = new FileReader(testFile);
@@ -74,11 +76,13 @@ public class ConcurrentFileTest {
 							fr.read();
 						}
 						fr.close();
+					} catch (Exception e) {
+						System.out.println(
+								"reader error : " + e.getClass()
+								+ " : " + e.getMessage());
 					}
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
 				}
+
 				System.out.println("reader finished : elapsedTime = "
 						+ (System.currentTimeMillis() - start) + " ms");
 			}
