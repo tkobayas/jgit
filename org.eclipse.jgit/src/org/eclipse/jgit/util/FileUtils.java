@@ -70,11 +70,15 @@ import java.util.regex.Pattern;
 import org.eclipse.jgit.internal.JGitText;
 import org.eclipse.jgit.lib.Constants;
 import org.eclipse.jgit.util.FS.Attributes;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * File Utilities
  */
 public class FileUtils {
+
+	private static Logger LOG = LoggerFactory.getLogger(FileUtils.class);
 
 	/**
 	 * Option to delete given {@code File}
@@ -258,19 +262,27 @@ public class FileUtils {
 		int attempts = FS.DETECTED.retryFailedLockFileCommit() ? 10 : 1;
 		while (--attempts >= 0) {
 			try {
+				LOG.info("rename : src = " + src.toPath() + ", dst = "
+						+ dst.toPath());
 				Files.move(src.toPath(), dst.toPath(), options);
+				LOG.info("rename done");
 				return;
 			} catch (AtomicMoveNotSupportedException e) {
 				throw e;
 			} catch (IOException e) {
 				try {
+					LOG.info("1st failure", e);
 					if (!dst.delete()) {
+						LOG.info("can't delete");
 						delete(dst, EMPTY_DIRECTORIES_ONLY | RECURSIVE);
+					} else {
+						LOG.info("deleted");
 					}
 					// On *nix there is no try, you do or do not
 					Files.move(src.toPath(), dst.toPath(), options);
 					return;
 				} catch (IOException e2) {
+					LOG.info("2nd failure", e2);
 					// ignore and continue retry
 				}
 			}
