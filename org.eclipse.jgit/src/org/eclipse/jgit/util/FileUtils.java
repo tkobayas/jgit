@@ -48,6 +48,7 @@ package org.eclipse.jgit.util;
 import java.io.File;
 import java.io.IOException;
 import java.nio.channels.FileLock;
+import java.nio.file.AccessDeniedException;
 import java.nio.file.AtomicMoveNotSupportedException;
 import java.nio.file.CopyOption;
 import java.nio.file.Files;
@@ -262,6 +263,8 @@ public class FileUtils {
 				return;
 			} catch (AtomicMoveNotSupportedException e) {
 				throw e;
+			} catch (AccessDeniedException e) {
+				// Don't delete. Just retry
 			} catch (IOException e) {
 				try {
 					if (!dst.delete()) {
